@@ -1,22 +1,22 @@
-# vscode
+# VS Code
 .vscode 
 
 # Intellij
 *.iml
 .idea
 
-# npm
+# Dependency directories
 node_modules
 
-# Don't include the compiled main.js file in the repo.
-# They should be uploaded to GitHub releases instead.
+# Don't include the compiled main.js file
+# They should be uploaded to GitHub releases instead
 main.js
 
-# Exclude sourcemaps
+# Sourcemaps
 *.map
 
-# obsidian
+# Obsidian
 data.json
 
-# Exclude macOS Finder (System Explorer) View States
+# OS X
 .DS_Store

@@ -3,7 +3,7 @@
 	"name": "Dynamic Date",
 	"version": "0.1.0",
 	"minAppVersion": "1.8.0",
-	"description": "Converts date references in text into dynamic pills",
+	"description": "Dynamic date plugin for Obsidian",
 	"author": "Munckenh",
 	"authorUrl": "https://github.com/Munckenh",
 	"fundingUrl": "https://ko-fi.com/munckenh",
