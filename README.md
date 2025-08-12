@@ -12,15 +12,38 @@ A simple plugin for Obsidian that transforms date references in task lists into 
 ## Usage
 
 Add dates in your task lists using the format:
+
 - `📅 2025-08-12` for dates
 - `📅 2025-08-12 14:30` for dates with time
 
 The plugin will automatically convert these into easy-to-read pills like "Today", "Tomorrow", "Monday 2 PM", etc.
 
-## Releasing new releases
+## Installation
 
-- Update `manifest.json` with the new version number, such as `1.0.1`, and the minimum Obsidian version required for the latest release.
-- Run `npm version patch`, `npm version minor`, or `npm version major`.
-- Create new GitHub release using the new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of the repository and also in the release.
-- Publish the release.
+1. Clone the repository to `.obsidian/plugins/`:
+    ```sh
+    git clone https://github.com/Munckenh/obsidian-dynamic-date.git
+    ```
+2. Install the dependencies and compile:
+    ```sh
+    npm install
+    npm run build
+    ```
+3. Enable the plugin in Obsidian
+
+## Release
+
+To release a new version of the plugin:
+
+1. Update `manifest.json` with the new version number, such as `1.0.1`, and the minimum Obsidian version required for the latest release.
+2. Run `npm version patch`, `npm version minor`, or `npm version major`.
+3. Create new GitHub release using the new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
+4. Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of the repository and also in the release.
+5. Publish the release.
+
+## Scripts
+
+To manage the plugin, you can use the following scripts:
+
+- Build the plugin by running `npm run build` or with live reload by running `npm run dev`
+- Improve code quality (optional) by running `npm run lint`
