@@ -1,7 +1,7 @@
 {
 	"id": "obsidian-dynamic-date",
 	"name": "Dynamic Date",
-	"version": "1.0.0",
+	"version": "0.1.0",
 	"minAppVersion": "1.8.0",
 	"description": "Converts date references in text into dynamic pills",
 	"author": "Munckenh",
