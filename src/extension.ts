@@ -1,19 +1,18 @@
-import { Decoration, DecorationSet, EditorView, PluginValue, ViewPlugin, ViewUpdate, WidgetType } from '@codemirror/view';
+import { Decoration, DecorationSet, EditorView, PluginSpec, PluginValue, ViewPlugin, ViewUpdate, WidgetType } from '@codemirror/view';
 import { RangeSetBuilder } from '@codemirror/state';
 import moment from 'moment';
 import { DATE_REGEX, getRelativeText, getDateCategory, createDateElement } from './utils';
 
-export class DynamicPillWidget extends WidgetType {
+export class DateWidget extends WidgetType {
     constructor(
         private text: string,
         private category: string,
-        private originalText: string
     ) {
         super();
     }
 
     toDOM(view: EditorView): HTMLElement {
-        return createDateElement(this.text, this.category, this.originalText);
+        return createDateElement(this.text, this.category);
     }
 }
 
@@ -44,15 +43,14 @@ export class DateHighlightingPlugin implements PluginValue {
 
                 const cursorInRange = cursorPos >= matchStart && cursorPos <= matchEnd;
                 if (!cursorInRange) {
-                    const dateString = `${match[1]} ${match[2] || ''}`.trim();
-                    const date = moment(dateString, 'YYYY-MM-DD HH:mm');
+                    const date = moment(`${match[1]} ${match[2] || ''}`, 'YYYY-MM-DD HH:mm');
 
                     if (date.isValid()) {
                         const relativeText = getRelativeText(date);
                         const category = getDateCategory(date);
 
                         const decoration = Decoration.replace({
-                            widget: new DynamicPillWidget(relativeText, category, match[0]),
+                            widget: new DateWidget(relativeText, category),
                         });
 
                         builder.add(matchStart, matchEnd, decoration);
@@ -65,8 +63,11 @@ export class DateHighlightingPlugin implements PluginValue {
     }
 }
 
-export const getDateHighlightingPlugin = () => {
-    return ViewPlugin.fromClass(DateHighlightingPlugin, {
-        decorations: (value: DateHighlightingPlugin) => value.decorations,
-    });
+const pluginSpec: PluginSpec<DateHighlightingPlugin> = {
+    decorations: (value: DateHighlightingPlugin) => value.decorations
 };
+
+export const dateHighlightingPlugin = ViewPlugin.fromClass(
+    DateHighlightingPlugin,
+    pluginSpec
+);

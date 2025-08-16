@@ -1,7 +1,7 @@
 import { Plugin } from 'obsidian';
 import { DynamicDateSettingTab } from './settings';
 import moment from 'moment';
-import { getDateHighlightingPlugin } from './extension';
+import { dateHighlightingPlugin } from './extension';
 import { DATE_REGEX, DEFAULT_SETTINGS, DynamicDateSettings, getRelativeText, getDateCategory, createDateElement } from './utils';
 import { Extension } from '@codemirror/state';
 
@@ -42,7 +42,7 @@ export default class DynamicDatePlugin extends Plugin {
     }
 
     private setEditorExtensions() {
-        this.editorExtensions.push(getDateHighlightingPlugin());
+        this.editorExtensions.push(dateHighlightingPlugin);
     }
 
     private setPillColors(): void {
@@ -72,8 +72,7 @@ export default class DynamicDatePlugin extends Plugin {
             let lastIndex = 0;
             for (const match of value.matchAll(DATE_REGEX)) {
                 const matchIndex = match.index!;
-                const dateString = `${match[1]} ${match[2] || ''}`.trim();
-                const date = moment(dateString, 'YYYY-MM-DD HH:mm');
+                const date = moment(`${match[1]} ${match[2] || ''}`, 'YYYY-MM-DD HH:mm');
 
                 if (matchIndex > lastIndex) {
                     fragment.appendChild(document.createTextNode(value.slice(lastIndex, matchIndex)));
@@ -82,8 +81,7 @@ export default class DynamicDatePlugin extends Plugin {
                 if (date.isValid()) {
                     fragment.appendChild(createDateElement(
                         getRelativeText(date),
-                        getDateCategory(date),
-                        dateString
+                        getDateCategory(date)
                     ));
                 } else {
                     fragment.appendChild(document.createTextNode(match[0]));

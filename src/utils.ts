@@ -64,12 +64,9 @@ export function getDateCategory(date: moment.Moment): string {
     return 'future';
 }
 
-export function createDateElement(text: string, category: string, originalText?: string): HTMLElement {
+export function createDateElement(text: string, category: string): HTMLElement {
     const span = document.createElement('span');
     span.textContent = text;
     span.className = `date-pill date-pill-${category}`;
-    if (originalText) {
-        span.title = originalText;
-    }
     return span;
 }
