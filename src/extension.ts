@@ -1,5 +1,6 @@
-import { Decoration, DecorationSet, EditorView, PluginSpec, PluginValue, ViewPlugin, ViewUpdate, WidgetType } from '@codemirror/view';
+import { syntaxTree } from '@codemirror/language';
 import { RangeSetBuilder } from '@codemirror/state';
+import { Decoration, DecorationSet, EditorView, PluginSpec, PluginValue, ViewPlugin, ViewUpdate, WidgetType } from '@codemirror/view';
 import moment from 'moment';
 import { DATE_REGEX, getRelativeText, getDateCategory, createDateElement } from './utils';
 
@@ -34,29 +35,37 @@ export class DateHighlightingPlugin implements PluginValue {
         const cursorPos = view.state.selection.main.head;
 
         for (let { from, to } of view.visibleRanges) {
-            const text = view.state.doc.sliceString(from, to);
-            const matches = text.matchAll(DATE_REGEX);
+            syntaxTree(view.state).iterate({
+                from,
+                to,
+                enter: (node) => {
+                    if (node.type.name.startsWith('list')) {
+                        const text = view.state.doc.sliceString(node.from, node.to);
+                        const matches = text.matchAll(DATE_REGEX);
 
-            for (const match of matches) {
-                const matchStart = from + match.index!;
-                const matchEnd = matchStart + match[0].length;
+                        for (const match of matches) {
+                            const matchStart = node.from + match.index!;
+                            const matchEnd = matchStart + match[0].length;
 
-                const cursorInRange = cursorPos >= matchStart && cursorPos <= matchEnd;
-                if (!cursorInRange) {
-                    const date = moment(`${match[1]} ${match[2] || ''}`, 'YYYY-MM-DD HH:mm');
+                            const cursorInRange = cursorPos >= matchStart && cursorPos <= matchEnd;
+                            if (!cursorInRange) {
+                                const date = moment(`${match[1]} ${match[2] || ''}`, 'YYYY-MM-DD HH:mm');
 
-                    if (date.isValid()) {
-                        const relativeText = getRelativeText(date);
-                        const category = getDateCategory(date);
+                                if (date.isValid()) {
+                                    const relativeText = getRelativeText(date);
+                                    const category = getDateCategory(date);
 
-                        const decoration = Decoration.replace({
-                            widget: new DateWidget(relativeText, category),
-                        });
+                                    const decoration = Decoration.replace({
+                                        widget: new DateWidget(relativeText, category),
+                                    });
 
-                        builder.add(matchStart, matchEnd, decoration);
+                                    builder.add(matchStart, matchEnd, decoration);
+                                }
+                            }
+                        }
                     }
-                }
-            }
+                },
+            });
         }
 
         return builder.finish();
