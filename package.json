@@ -19,6 +19,7 @@
 	"author": "Munckenh",
 	"license": "MIT",
 	"devDependencies": {
+		"@codemirror/language": "^6.0.0",
 		"@codemirror/state": "^6.0.0",
 		"@codemirror/view": "^6.0.0",
 		"@eslint/js": "^9.0.0",
