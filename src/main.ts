@@ -12,13 +12,43 @@ export default class DynamicDatePlugin extends Plugin {
     async onload() {
         await this.loadSettings();
         this.addSettingTab(new DynamicDateSettingTab(this.app, this));
+        this.registerEditorExtension(this.editorExtensions);
+
         this.registerMarkdownPostProcessor((element, context) => {
             const items = element.querySelectorAll('.task-list-item');
             items.forEach((item) => {
-                this.processListItem(item as HTMLElement)
+                this.processListItem(item as HTMLElement);
             });
         });
-        this.registerEditorExtension(this.editorExtensions);
+
+        this.registerDomEvent(document, 'click', (event: Event) => {
+            const target = event.target as HTMLInputElement;
+            if (target.type === 'checkbox') {
+                const item = target.closest('.task-list-item');
+                if (item) {
+                    const observer = new MutationObserver((mutations) => {
+                        mutations.forEach((mutation) => {
+                            if (mutation.type === 'attributes' && mutation.attributeName === 'data-task') {
+                                item.querySelectorAll('.date-pill').forEach((pill) => {
+                                    pill.classList.toggle('striked-through', this.isStrikedThrough(item as HTMLElement));
+                                });
+                                observer.disconnect();
+                            }
+                        });
+                    });
+
+                    observer.observe(item, {
+                        attributes: true,
+                        attributeFilter: ['data-task']
+                    });
+
+                    setTimeout(() => {
+                        observer.disconnect();
+                    }, 100);
+                }
+
+            }
+        });
     }
 
     async loadSettings() {
@@ -54,6 +84,11 @@ export default class DynamicDatePlugin extends Plugin {
         body.style.setProperty('--date-pill-future', this.settings.pillColors.future);
     }
 
+    private isStrikedThrough(element: HTMLElement): boolean {
+        const taskAttribute = element.getAttribute('data-task');
+        return taskAttribute === 'x' || taskAttribute === '-';
+    }
+
     private processListItem(element: HTMLElement): void {
         const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
         const nodes: Text[] = [];
@@ -81,7 +116,8 @@ export default class DynamicDatePlugin extends Plugin {
                 if (date.isValid()) {
                     fragment.appendChild(createDateElement(
                         getRelativeText(date),
-                        getDateCategory(date)
+                        getDateCategory(date),
+                        this.isStrikedThrough(element),
                     ));
                 } else {
                     fragment.appendChild(document.createTextNode(match[0]));

@@ -115,7 +115,7 @@ export class DynamicDateSettingTab extends PluginSettingTab {
                 .setIcon('rotate-ccw')
                 .setTooltip('Restore default')
                 .onClick(async () => {
-                    this.plugin.settings.pillTextColor = "#ffffff";
+                    this.plugin.settings.pillTextColor = '#ffffff';
                     this.display();
                     await this.plugin.saveSettings();
                 })

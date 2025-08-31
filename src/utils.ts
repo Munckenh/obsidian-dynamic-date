@@ -64,9 +64,9 @@ export function getDateCategory(date: moment.Moment): string {
     return 'future';
 }
 
-export function createDateElement(text: string, category: string): HTMLElement {
+export function createDateElement(text: string, category: string, isStrikedThrough: boolean = false): HTMLElement {
     const span = document.createElement('span');
     span.textContent = text;
-    span.className = `date-pill date-pill-${category}`;
+    span.className = `date-pill date-pill-${category}${isStrikedThrough ? ' striked-through' : ''}`;
     return span;
 }
