@@ -55,8 +55,8 @@ export class DateHighlightingPlugin implements PluginValue {
                                 if (date.isValid()) {
                                     const relativeText = getRelativeText(date);
                                     const category = getDateCategory(date);
-                                    const taskPrefix = view.state.doc.sliceString(node.from - 3, node.from);
-                                    const isStrikedThrough = taskPrefix === '[x]' || taskPrefix === '[-]';
+                                    const lineText = view.state.doc.lineAt(node.from).text;
+                                    const isStrikedThrough = /\[[x-]\]/i.test(lineText);
 
                                     const decoration = Decoration.replace({
                                         widget: new DateWidget(relativeText, category, isStrikedThrough),
