@@ -20,6 +20,21 @@ export default class DynamicDatePlugin extends Plugin {
                 this.processListItem(item as HTMLElement);
             });
         });
+
+        this.registerDomEvent(document, 'click', (event: Event) => {
+            const target = event.target as HTMLInputElement;
+            if (target.type === 'checkbox') {
+                const item = target.closest('.task-list-item');
+                if (item) {
+                    setTimeout(() => {
+                        item.querySelectorAll('.date-pill').forEach((pill) => {
+                            pill.classList.toggle('striked-through', this.isStrikedThrough(item as HTMLElement));
+                        });
+                    }, 10);
+                }
+
+            }
+        });
     }
 
     async loadSettings() {
