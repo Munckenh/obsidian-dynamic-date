@@ -13,7 +13,7 @@ export class DynamicDateSettingTab extends PluginSettingTab {
         const { containerEl } = this;
         containerEl.empty();
 
-        new Setting(containerEl).setName("Color").setHeading();
+        new Setting(containerEl).setName('Color').setHeading();
 
         new Setting(containerEl)
             .setName('Overdue')
