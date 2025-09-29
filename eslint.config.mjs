@@ -29,6 +29,8 @@ export default [
                     args: 'none',
                 },
             ],
+            'semi': ['error', 'always'],
+            'quotes': ['error', 'single'],
         },
     },
     {
