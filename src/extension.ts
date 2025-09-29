@@ -13,7 +13,7 @@ export class DateWidget extends WidgetType {
         super();
     }
 
-    toDOM(view: EditorView): HTMLElement {
+    toDOM() {
         return createDateElement(this.text, this.category, this.isStruckThrough);
     }
 }
@@ -31,45 +31,41 @@ export class DateHighlightingPlugin implements PluginValue {
         }
     }
 
-    buildDecorations(view: EditorView): DecorationSet {
+    buildDecorations(view: EditorView) {
         const builder = new RangeSetBuilder<Decoration>();
         const cursorPos = view.state.selection.main.head;
 
-        for (let { from, to } of view.visibleRanges) {
-            syntaxTree(view.state).iterate({
-                from,
-                to,
-                enter: (node) => {
-                    if (node.type.name.startsWith('list')) {
-                        const text = view.state.doc.sliceString(node.from, node.to);
-                        const matches = text.matchAll(DATE_REGEX);
+        syntaxTree(view.state).iterate({
+            enter: (node) => {
+                if (node.type.name.startsWith('list')) {
+                    const text = view.state.doc.sliceString(node.from, node.to);
+                    const matches = text.matchAll(DATE_REGEX);
 
-                        for (const match of matches) {
-                            const matchStart = node.from + match.index!;
-                            const matchEnd = matchStart + match[0].length;
+                    for (const match of matches) {
+                        const matchStart = node.from + match.index!;
+                        const matchEnd = matchStart + match[0].length;
 
-                            const cursorInRange = cursorPos >= matchStart && cursorPos <= matchEnd;
-                            if (!cursorInRange) {
-                                const date = moment(`${match[1]} ${match[2] || ''}`, 'YYYY-MM-DD HH:mm');
+                        const cursorInRange = cursorPos >= matchStart && cursorPos <= matchEnd;
+                        if (!cursorInRange) {
+                            const date = moment(`${match[1]} ${match[2] || ''}`, 'YYYY-MM-DD HH:mm');
 
-                                if (date.isValid()) {
-                                    const relativeText = getRelativeText(date);
-                                    const category = getDateCategory(date);
-                                    const lineText = view.state.doc.lineAt(node.from).text;
-                                    const isStruckThrough = /\[[x-]\]/i.test(lineText);
+                            if (date.isValid()) {
+                                const relativeText = getRelativeText(date);
+                                const category = getDateCategory(date);
+                                const lineText = view.state.doc.lineAt(node.from).text;
+                                const isStruckThrough = /\[[x-]\]/i.test(lineText);
 
-                                    const decoration = Decoration.replace({
-                                        widget: new DateWidget(relativeText, category, isStruckThrough),
-                                    });
+                                const decoration = Decoration.replace({
+                                    widget: new DateWidget(relativeText, category, isStruckThrough),
+                                });
 
-                                    builder.add(matchStart, matchEnd, decoration);
-                                }
+                                builder.add(matchStart, matchEnd, decoration);
                             }
                         }
                     }
-                },
-            });
-        }
+                }
+            },
+        });
 
         return builder.finish();
     }
