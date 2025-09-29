@@ -25,7 +25,7 @@ export class DynamicDateSettingTab extends PluginSettingTab {
                     this.plugin.settings.pillColors.overdue = '#d1453b';
                     await this.plugin.saveSettings();
                     this.display();
-                })
+                }),
             )
             .addColorPicker(color => color
                 .setValue(this.plugin.settings.pillColors.overdue)
@@ -44,7 +44,7 @@ export class DynamicDateSettingTab extends PluginSettingTab {
                     this.plugin.settings.pillColors.today = '#058527';
                     await this.plugin.saveSettings();
                     this.display();
-                })
+                }),
             )
             .addColorPicker(color => color
                 .setValue(this.plugin.settings.pillColors.today)
@@ -63,7 +63,7 @@ export class DynamicDateSettingTab extends PluginSettingTab {
                     this.plugin.settings.pillColors.tomorrow = '#ad6200';
                     await this.plugin.saveSettings();
                     this.display();
-                })
+                }),
             )
             .addColorPicker(color => color
                 .setValue(this.plugin.settings.pillColors.tomorrow)
@@ -82,7 +82,7 @@ export class DynamicDateSettingTab extends PluginSettingTab {
                     this.plugin.settings.pillColors.thisWeek = '#692ec2';
                     await this.plugin.saveSettings();
                     this.display();
-                })
+                }),
             )
             .addColorPicker(color => color
                 .setValue(this.plugin.settings.pillColors.thisWeek)
@@ -101,7 +101,7 @@ export class DynamicDateSettingTab extends PluginSettingTab {
                     this.plugin.settings.pillColors.future = '#808080';
                     await this.plugin.saveSettings();
                     this.display();
-                })
+                }),
             )
             .addColorPicker(color => color
                 .setValue(this.plugin.settings.pillColors.future)
@@ -120,7 +120,7 @@ export class DynamicDateSettingTab extends PluginSettingTab {
                     this.plugin.settings.pillTextColor = '#ffffff';
                     this.display();
                     await this.plugin.saveSettings();
-                })
+                }),
             )
             .addColorPicker(color => color
                 .setValue(this.plugin.settings.pillTextColor)

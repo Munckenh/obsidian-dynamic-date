@@ -10,9 +10,9 @@ export const DEFAULT_SETTINGS: DynamicDateSettings = {
         today: '#058527',
         tomorrow: '#ad6200',
         thisWeek: '#692ec2',
-        future: '#808080'
+        future: '#808080',
     },
-    pillTextColor: '#ffffff'
+    pillTextColor: '#ffffff',
 };
 
 export interface DynamicDateSettings {

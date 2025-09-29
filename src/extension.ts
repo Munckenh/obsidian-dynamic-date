@@ -8,7 +8,7 @@ export class DateWidget extends WidgetType {
     constructor(
         private text: string,
         private category: string,
-        private isStruckThrough: boolean = false
+        private isStruckThrough: boolean = false,
     ) {
         super();
     }
@@ -76,10 +76,10 @@ export class DateHighlightingPlugin implements PluginValue {
 }
 
 const pluginSpec: PluginSpec<DateHighlightingPlugin> = {
-    decorations: (value: DateHighlightingPlugin) => value.decorations
+    decorations: (value: DateHighlightingPlugin) => value.decorations,
 };
 
 export const dateHighlightingPlugin = ViewPlugin.fromClass(
     DateHighlightingPlugin,
-    pluginSpec
+    pluginSpec,
 );
