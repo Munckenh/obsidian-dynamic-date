@@ -13,8 +13,10 @@ export class DynamicDateSettingTab extends PluginSettingTab {
         const { containerEl } = this;
         containerEl.empty();
 
+        new Setting(containerEl).setName("Color").setHeading();
+
         new Setting(containerEl)
-            .setName('Overdue dates color')
+            .setName('Overdue')
             .setDesc('Color for dates that have passed')
             .addExtraButton(button => button
                 .setIcon('rotate-ccw')
@@ -33,7 +35,7 @@ export class DynamicDateSettingTab extends PluginSettingTab {
                 }));
 
         new Setting(containerEl)
-            .setName('Today color')
+            .setName('Today')
             .setDesc('Color for today\'s date')
             .addExtraButton(button => button
                 .setIcon('rotate-ccw')
@@ -52,7 +54,7 @@ export class DynamicDateSettingTab extends PluginSettingTab {
                 }));
 
         new Setting(containerEl)
-            .setName('Tomorrow color')
+            .setName('Tomorrow')
             .setDesc('Color for tomorrow\'s date')
             .addExtraButton(button => button
                 .setIcon('rotate-ccw')
@@ -71,7 +73,7 @@ export class DynamicDateSettingTab extends PluginSettingTab {
                 }));
 
         new Setting(containerEl)
-            .setName('This week color')
+            .setName('This week')
             .setDesc('Color for dates within the next 7 days')
             .addExtraButton(button => button
                 .setIcon('rotate-ccw')
@@ -90,7 +92,7 @@ export class DynamicDateSettingTab extends PluginSettingTab {
                 }));
 
         new Setting(containerEl)
-            .setName('Future dates color')
+            .setName('Future')
             .setDesc('Color for dates beyond next week')
             .addExtraButton(button => button
                 .setIcon('rotate-ccw')
@@ -109,7 +111,7 @@ export class DynamicDateSettingTab extends PluginSettingTab {
                 }));
 
         new Setting(containerEl)
-            .setName('Text color')
+            .setName('Text')
             .setDesc('Color of the text inside date pills')
             .addExtraButton(button => button
                 .setIcon('rotate-ccw')

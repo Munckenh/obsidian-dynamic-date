@@ -8,13 +8,13 @@ export class DateWidget extends WidgetType {
     constructor(
         private text: string,
         private category: string,
-        private isStrikedThrough: boolean = false
+        private isStruckThrough: boolean = false
     ) {
         super();
     }
 
     toDOM(view: EditorView): HTMLElement {
-        return createDateElement(this.text, this.category, this.isStrikedThrough);
+        return createDateElement(this.text, this.category, this.isStruckThrough);
     }
 }
 
@@ -56,10 +56,10 @@ export class DateHighlightingPlugin implements PluginValue {
                                     const relativeText = getRelativeText(date);
                                     const category = getDateCategory(date);
                                     const lineText = view.state.doc.lineAt(node.from).text;
-                                    const isStrikedThrough = /\[[x-]\]/i.test(lineText);
+                                    const isStruckThrough = /\[[x-]\]/i.test(lineText);
 
                                     const decoration = Decoration.replace({
-                                        widget: new DateWidget(relativeText, category, isStrikedThrough),
+                                        widget: new DateWidget(relativeText, category, isStruckThrough),
                                     });
 
                                     builder.add(matchStart, matchEnd, decoration);

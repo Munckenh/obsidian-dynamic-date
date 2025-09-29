@@ -17,7 +17,35 @@ export default class DynamicDatePlugin extends Plugin {
         this.registerMarkdownPostProcessor((element, context) => {
             const items = element.querySelectorAll('.task-list-item');
             items.forEach((item) => {
-                this.processListItem(item as HTMLElement);
+                if (!(item.textContent || '').match(DATE_REGEX)) return;
+                
+                const walker = document.createTreeWalker(
+                    item,
+                    NodeFilter.SHOW_TEXT,
+                    {
+                        acceptNode(node) {
+                            let parent = node.parentNode;
+                            while (parent && parent !== item) {
+                                if (parent.nodeName === 'UL' || parent.nodeName === 'OL') {
+                                    return NodeFilter.FILTER_REJECT;
+                                }
+                                parent = parent.parentNode;
+                            }
+                            return NodeFilter.FILTER_ACCEPT;
+                        },
+                    }
+                );
+
+                const nodes: Text[] = [];
+                while (walker.nextNode()) {
+                    const node = walker.currentNode as Text;
+                    const value = node.nodeValue || '';
+                    if (value.match(DATE_REGEX)) nodes.push(node);
+                }
+
+                if (nodes.length > 0) {
+                    this.processNodes(nodes, this.isStruckThrough(item as HTMLElement));
+                }
             });
         });
 
@@ -28,7 +56,7 @@ export default class DynamicDatePlugin extends Plugin {
                 if (item) {
                     setTimeout(() => {
                         item.querySelectorAll('.date-pill').forEach((pill) => {
-                            pill.classList.toggle('striked-through', this.isStrikedThrough(item as HTMLElement));
+                            pill.classList.toggle('struck-through', this.isStruckThrough(item as HTMLElement));
                         });
                     }, 10);
                 }
@@ -70,28 +98,22 @@ export default class DynamicDatePlugin extends Plugin {
         body.style.setProperty('--date-pill-future', this.settings.pillColors.future);
     }
 
-    private isStrikedThrough(element: HTMLElement): boolean {
+    private isStruckThrough(element: HTMLElement): boolean {
         const taskAttribute = element.getAttribute('data-task');
         return taskAttribute === 'x' || taskAttribute === '-';
     }
 
-    private processListItem(element: HTMLElement): void {
-        const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
-        const nodes: Text[] = [];
-
-        while (walker.nextNode()) {
-            const node = walker.currentNode as Text;
-            if ((node.nodeValue || '').match(DATE_REGEX)) {
-                nodes.push(node);
-            }
-        }
-
+    private processNodes(nodes: Text[], isStruckThrough: boolean): void {
         nodes.forEach((node) => {
-            const fragment = document.createDocumentFragment();
             const value = node.nodeValue || '';
+            const matches = Array.from(value.matchAll(DATE_REGEX));
 
+            if (matches.length === 0) return;
+
+            const fragment = document.createDocumentFragment();
             let lastIndex = 0;
-            for (const match of value.matchAll(DATE_REGEX)) {
+
+            for (const match of matches) {
                 const matchIndex = match.index!;
                 const date = moment(`${match[1]} ${match[2] || ''}`, 'YYYY-MM-DD HH:mm');
 
@@ -103,7 +125,7 @@ export default class DynamicDatePlugin extends Plugin {
                     fragment.appendChild(createDateElement(
                         getRelativeText(date),
                         getDateCategory(date),
-                        this.isStrikedThrough(element),
+                        isStruckThrough
                     ));
                 } else {
                     fragment.appendChild(document.createTextNode(match[0]));
