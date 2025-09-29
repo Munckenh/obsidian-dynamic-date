@@ -98,7 +98,7 @@ export default class DynamicDatePlugin extends Plugin {
     }
 
     private processTaskItem(item: HTMLElement) {
-        if (!(item.textContent || '').match(DATE_REGEX)) return;
+        if ((item.textContent || '').search(DATE_REGEX) === -1) return;
 
         const nodes = this.getTextNodes(item);
         if (nodes.length > 0) {
@@ -128,7 +128,7 @@ export default class DynamicDatePlugin extends Plugin {
         while (walker.nextNode()) {
             const node = walker.currentNode;
             const value = node.nodeValue || '';
-            if (value.match(DATE_REGEX)) nodes.push(node);
+            if (value.search(DATE_REGEX) !== -1) nodes.push(node);
         }
         return nodes;
     }
