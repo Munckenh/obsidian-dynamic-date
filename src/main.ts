@@ -14,55 +14,22 @@ export default class DynamicDatePlugin extends Plugin {
         this.addSettingTab(new DynamicDateSettingTab(this.app, this));
         this.registerEditorExtension(this.editorExtensions);
 
-        this.registerMarkdownPostProcessor((element, context) => {
-            const items = element.querySelectorAll('.task-list-item');
-            items.forEach((item) => {
-                if (!(item.textContent || '').match(DATE_REGEX)) return;
-                
-                const walker = document.createTreeWalker(
-                    item,
-                    NodeFilter.SHOW_TEXT,
-                    {
-                        acceptNode(node) {
-                            let parent = node.parentNode;
-                            while (parent && parent !== item) {
-                                if (parent.nodeName === 'UL' || parent.nodeName === 'OL') {
-                                    return NodeFilter.FILTER_REJECT;
-                                }
-                                parent = parent.parentNode;
-                            }
-                            return NodeFilter.FILTER_ACCEPT;
-                        },
-                    }
-                );
-
-                const nodes: Text[] = [];
-                while (walker.nextNode()) {
-                    const node = walker.currentNode as Text;
-                    const value = node.nodeValue || '';
-                    if (value.match(DATE_REGEX)) nodes.push(node);
-                }
-
-                if (nodes.length > 0) {
-                    this.processNodes(nodes, this.isStruckThrough(item as HTMLElement));
-                }
-            });
+        this.registerMarkdownPostProcessor((element, _) => {
+            this.processElement(element);
         });
 
-        this.registerDomEvent(document, 'click', (event: Event) => {
-            const target = event.target as HTMLInputElement;
-            if (target.type === 'checkbox') {
-                const item = target.closest('.task-list-item');
-                if (item) {
-                    setTimeout(() => {
-                        item.querySelectorAll('.date-pill').forEach((pill) => {
-                            pill.classList.toggle('struck-through', this.isStruckThrough(item as HTMLElement));
-                        });
-                    }, 10);
-                }
-
-            }
+        this.registerDomEvent(document, 'click', (event) => {
+            this.handleCheckboxClick(event);
         });
+    }
+
+    onunload() {
+        const body = document.body;
+        body.style.removeProperty('--date-pill-overdue');
+        body.style.removeProperty('--date-pill-today');
+        body.style.removeProperty('--date-pill-tomorrow');
+        body.style.removeProperty('--date-pill-this-week');
+        body.style.removeProperty('--date-pill-future');
     }
 
     async loadSettings() {
@@ -76,20 +43,11 @@ export default class DynamicDatePlugin extends Plugin {
         this.setPillColors();
     }
 
-    onunload() {
-        const body = document.body;
-        body.style.removeProperty('--date-pill-overdue');
-        body.style.removeProperty('--date-pill-today');
-        body.style.removeProperty('--date-pill-tomorrow');
-        body.style.removeProperty('--date-pill-this-week');
-        body.style.removeProperty('--date-pill-future');
-    }
-
     private setEditorExtensions() {
         this.editorExtensions.push(dateHighlightingPlugin);
     }
 
-    private setPillColors(): void {
+    private setPillColors() {
         const body = document.body;
         body.style.setProperty('--date-pill-overdue', this.settings.pillColors.overdue);
         body.style.setProperty('--date-pill-today', this.settings.pillColors.today);
@@ -98,12 +56,84 @@ export default class DynamicDatePlugin extends Plugin {
         body.style.setProperty('--date-pill-future', this.settings.pillColors.future);
     }
 
-    private isStruckThrough(element: HTMLElement): boolean {
-        const taskAttribute = element.getAttribute('data-task');
-        return taskAttribute === 'x' || taskAttribute === '-';
+    private processElement(element: Element) {
+        const items = element.querySelectorAll('.task-list-item');
+        items.forEach((item: HTMLElement) => this.processTaskItem(item));
     }
 
-    private processNodes(nodes: Text[], isStruckThrough: boolean): void {
+    private handleCheckboxClick(event: Event) {
+        const target = event.target as HTMLInputElement;
+        if (target.type !== 'checkbox') return;
+
+        const clickedItem = target.closest('.task-list-item') as HTMLElement;
+        if (!clickedItem) return;
+
+        // Allow DOM to update checkbox state first
+        setTimeout(() => {
+            const items = [clickedItem, ...Array.from(clickedItem.querySelectorAll('.task-list-item'))];
+            items.forEach((item: HTMLElement) => {
+                item.querySelectorAll('.date-pill').forEach((pill) => {
+                    pill.classList.toggle('struck-through', this.isStruckThrough(item));
+                });
+            });
+        }, 10);
+    }
+
+    private isStruckThrough(item: HTMLElement) {
+        let current = item;
+        while (current) {
+            if (current.classList.contains('task-list-item')) {
+                const taskAttribute = current.getAttribute('data-task');
+                if (taskAttribute === 'x' || taskAttribute === '-') return true;
+            }
+
+            const parent = current.parentElement?.closest('.task-list-item') as HTMLElement;
+            if (parent) {
+                current = parent;
+            } else {
+                break;
+            }
+        }
+        return false;
+    }
+
+    private processTaskItem(item: HTMLElement) {
+        if (!(item.textContent || '').match(DATE_REGEX)) return;
+
+        const nodes = this.getTextNodes(item);
+        if (nodes.length > 0) {
+            this.processTextNodes(nodes as Text[], this.isStruckThrough(item));
+        }
+    }
+
+    private getTextNodes(item: HTMLElement) {
+        const walker = document.createTreeWalker(
+            item,
+            NodeFilter.SHOW_TEXT,
+            {
+                acceptNode(node) {
+                    let parent = node.parentNode;
+                    while (parent && parent !== item) {
+                        if (parent.nodeName === 'UL' || parent.nodeName === 'OL') {
+                            return NodeFilter.FILTER_REJECT;
+                        }
+                        parent = parent.parentNode;
+                    }
+                    return NodeFilter.FILTER_ACCEPT;
+                },
+            },
+        );
+
+        const nodes = [];
+        while (walker.nextNode()) {
+            const node = walker.currentNode;
+            const value = node.nodeValue || '';
+            if (value.match(DATE_REGEX)) nodes.push(node);
+        }
+        return nodes;
+    }
+
+    private processTextNodes(nodes: Text[], isStruckThrough: boolean) {
         nodes.forEach((node) => {
             const value = node.nodeValue || '';
             const matches = Array.from(value.matchAll(DATE_REGEX));
@@ -125,7 +155,7 @@ export default class DynamicDatePlugin extends Plugin {
                     fragment.appendChild(createDateElement(
                         getRelativeText(date),
                         getDateCategory(date),
-                        isStruckThrough
+                        isStruckThrough,
                     ));
                 } else {
                     fragment.appendChild(document.createTextNode(match[0]));
