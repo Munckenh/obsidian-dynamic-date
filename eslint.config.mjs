@@ -23,14 +23,16 @@ export default [
             ...js.configs.recommended.rules,
             ...tseslint.configs.recommended.rules,
             'no-trailing-spaces': 'error',
+            'semi': ['error', 'always'],
+            'quotes': ['error', 'single'],
+            'comma-dangle': ['error', 'always-multiline'],
+            'no-multiple-empty-lines': ['error', { max: 1, maxEOF: 0 }],
             '@typescript-eslint/no-unused-vars': [
                 'error',
                 {
                     args: 'none',
                 },
             ],
-            'semi': ['error', 'always'],
-            'quotes': ['error', 'single'],
         },
     },
     {
