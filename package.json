@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-dynamic-date",
-	"version": "0.1.0",
-	"description": "Dynamic date plugin for Obsidian",
+	"name": "obsidian-relative-dates",
+	"version": "1.0.0",
+	"description": "Relative, color-coded dates for Obsidian",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
@@ -14,7 +14,7 @@
 		"obsidian",
 		"plugin",
 		"date",
-		"dynamic"
+		"relative"
 	],
 	"author": "Munckenh",
 	"license": "MIT",

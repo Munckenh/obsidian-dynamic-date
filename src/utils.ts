@@ -2,7 +2,7 @@ import moment from 'moment';
 
 export const DATE_REGEX = /📅\s*(\d{4}-\d{2}-\d{2})(?:\s*(\d{2}:\d{2}))?/g;
 
-export const DEFAULT_SETTINGS: DynamicDateSettings = {
+export const DEFAULT_SETTINGS: RelativeDatesSettings = {
     dateFormat: 'YYYY-MM-DD',
     timeFormat: 'HH:mm',
     pillColors: {
@@ -15,7 +15,7 @@ export const DEFAULT_SETTINGS: DynamicDateSettings = {
     pillTextColor: '#ffffff',
 };
 
-export interface DynamicDateSettings {
+export interface RelativeDatesSettings {
     dateFormat: string;
     timeFormat: string;
     pillColors: {

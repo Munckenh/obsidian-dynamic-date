@@ -1,10 +1,10 @@
-# Dynamic Date
+# Relative Dates
 
-A simple plugin for Obsidian that transforms date references in task lists into color-coded, easy-to-read pills.
+A simple plugin for Obsidian that transforms date references in your task lists into color-coded pills that show relative dates.
 
 ## Features
 
-- Converts date references in the format `📅 YYYY-MM-DD` (with optional time `HH:MM`) into dynamic pills
+- Converts date references in the format `📅 YYYY-MM-DD` (with optional time `HH:MM`) into relative date pills
 - Works in both Reading mode and Live Preview mode
 - Color-coded pills based on date proximity (overdue, today, tomorrow, this week, future)
 - Customizable colors via settings
@@ -22,7 +22,7 @@ The plugin will automatically convert these into easy-to-read pills like "Today"
 
 1. Clone the repository to `.obsidian/plugins/`:
     ```sh
-    git clone https://github.com/Munckenh/obsidian-dynamic-date.git
+    git clone https://github.com/Munckenh/obsidian-relative-dates.git
     ```
 2. Install the dependencies and compile:
     ```sh

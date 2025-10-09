@@ -1,17 +1,17 @@
 import { Plugin } from 'obsidian';
-import { DynamicDateSettingTab } from './settings';
+import { RelativeDatesSettingTab } from './settings';
 import moment from 'moment';
 import { dateHighlightingPlugin } from './extension';
-import { DATE_REGEX, DEFAULT_SETTINGS, DynamicDateSettings, getRelativeText, getDateCategory, createDateElement } from './utils';
+import { DATE_REGEX, DEFAULT_SETTINGS, RelativeDatesSettings, getRelativeText, getDateCategory, createDateElement } from './utils';
 import { Extension } from '@codemirror/state';
 
-export default class DynamicDatePlugin extends Plugin {
-    settings: DynamicDateSettings;
+export default class RelativeDatesPlugin extends Plugin {
+    settings: RelativeDatesSettings;
     private editorExtensions: Extension[] = [];
 
     async onload() {
         await this.loadSettings();
-        this.addSettingTab(new DynamicDateSettingTab(this.app, this));
+        this.addSettingTab(new RelativeDatesSettingTab(this.app, this));
         this.registerEditorExtension(this.editorExtensions);
 
         this.registerMarkdownPostProcessor((element, _) => {

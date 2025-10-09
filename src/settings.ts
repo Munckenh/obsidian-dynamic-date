@@ -1,10 +1,10 @@
-import DynamicDatePlugin from './main';
+import RelativeDatesPlugin from './main';
 import { App, PluginSettingTab, Setting } from 'obsidian';
 
-export class DynamicDateSettingTab extends PluginSettingTab {
-    plugin: DynamicDatePlugin;
+export class RelativeDatesSettingTab extends PluginSettingTab {
+    plugin: RelativeDatesPlugin;
 
-    constructor(app: App, plugin: DynamicDatePlugin) {
+    constructor(app: App, plugin: RelativeDatesPlugin) {
         super(app, plugin);
         this.plugin = plugin;
     }
