@@ -1,7 +1,7 @@
 {
 	"id": "relative-dates",
 	"name": "Relative Dates",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minAppVersion": "1.9.0",
 	"description": "Relative, color-coded dates for Obsidian",
 	"author": "Munckenh",
