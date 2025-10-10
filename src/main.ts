@@ -8,6 +8,7 @@ import { Extension } from '@codemirror/state';
 export default class RelativeDatesPlugin extends Plugin {
     settings: RelativeDatesSettings;
     private editorExtensions: Extension[] = [];
+    private styleElement: HTMLStyleElement | null = null;
 
     async onload() {
         await this.loadSettings();
@@ -24,36 +25,44 @@ export default class RelativeDatesPlugin extends Plugin {
     }
 
     onunload() {
-        const body = document.body;
-        body.style.removeProperty('--date-pill-overdue');
-        body.style.removeProperty('--date-pill-today');
-        body.style.removeProperty('--date-pill-tomorrow');
-        body.style.removeProperty('--date-pill-this-week');
-        body.style.removeProperty('--date-pill-future');
+        if (this.styleElement && this.styleElement.parentNode)
+            this.styleElement.parentNode.removeChild(this.styleElement);
     }
 
     async loadSettings() {
         this.setEditorExtensions();
         this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-        this.setPillColors();
+        this.updateStyles();
     }
 
     async saveSettings() {
         await this.saveData(this.settings);
-        this.setPillColors();
+        this.updateStyles();
     }
 
     private setEditorExtensions() {
         this.editorExtensions.push(dateHighlightingPlugin);
     }
 
-    private setPillColors() {
-        const body = document.body;
-        body.style.setProperty('--date-pill-overdue', this.settings.pillColors.overdue);
-        body.style.setProperty('--date-pill-today', this.settings.pillColors.today);
-        body.style.setProperty('--date-pill-tomorrow', this.settings.pillColors.tomorrow);
-        body.style.setProperty('--date-pill-this-week', this.settings.pillColors.thisWeek);
-        body.style.setProperty('--date-pill-future', this.settings.pillColors.future);
+    private updateStyles() {
+        if (!this.styleElement) {
+            this.styleElement = document.createElement('style');
+            this.styleElement.id = 'relative-dates-custom-colors';
+            document.head.appendChild(this.styleElement);
+        }
+
+        const css = `
+            body {
+                --date-pill-overdue: ${this.settings.pillColors.overdue};
+                --date-pill-today: ${this.settings.pillColors.today};
+                --date-pill-tomorrow: ${this.settings.pillColors.tomorrow};
+                --date-pill-this-week: ${this.settings.pillColors.thisWeek};
+                --date-pill-future: ${this.settings.pillColors.future};
+                --date-pill-text: ${this.settings.pillTextColor};
+            }
+        `;
+
+        this.styleElement.textContent = css;
     }
 
     private processElement(element: Element) {
