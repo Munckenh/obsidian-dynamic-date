@@ -16,7 +16,9 @@ Add dates in your task lists using the format:
 - `📅 2025-08-12` for dates
 - `📅 2025-08-12 14:30` for dates with time
 
-The plugin will automatically convert these into easy-to-read pills like "Today", "Tomorrow", "Monday 2 PM", etc.
+The plugin will automatically convert these into easy-to-read pills such as:
+
+<img src="images/screenshot-1.png" width="50%">
 
 ## Installation
 
